@@ -1,54 +1,20 @@
+import React from 'react';
+import { Phone } from 'lucide-react';
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { toast } from "sonner";
-
-export default function EmergencyButton() {
-  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
-  const user = useQuery(api.users.getCurrentUser);
-
-  if (user?.role !== "owner") {
-    return null; // Only show for pet owners
-  }
+const EmergencyButton: React.FC = () => {
+  const handleEmergencyCall = () => {
+    alert('Emergency Hotline: 1-800-PET-HELP\n\nFor immediate veterinary assistance, call now!');
+  };
 
   return (
-    <>
-      <button
-        onClick={() => setShowEmergencyModal(true)}
-        className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 px-6 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg font-bold text-lg"
-      >
-        🚨 EMERGENCY
-        <div className="text-sm font-normal opacity-90">Blood Needed Now</div>
-      </button>
-
-      {showEmergencyModal && (
-        <EmergencyModal onClose={() => setShowEmergencyModal(false)} />
-      )}
-    </>
+    <button
+      onClick={handleEmergencyCall}
+      className="fixed bottom-6 right-6 bg-red-500 hover:bg-red-600 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 z-50 pulse-animation"
+      aria-label="Emergency Hotline"
+    >
+      <Phone className="w-6 h-6" />
+    </button>
   );
-}
+};
 
-function EmergencyModal({ onClose }: { onClose: () => void }) {
-  const [selectedPet, setSelectedPet] = useState("");
-  const [formData, setFormData] = useState({
-    requiredAmount: "",
-    contactInfo: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const pets = useQuery(api.pets.getUserPets);
-  const donors = useQuery(api.pets.searchDonorPets, {});
-  const createRequest = useMutation(api.requests.createRequest);
-
-  const handleEmergencyRequest = async () => {
-    if (!selectedPet || !formData.requiredAmount || !formData.contactInfo) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      // Find compatible donors for the selected pet
-      const
+export default EmergencyButton;
